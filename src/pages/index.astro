@@ -1,0 +1,15 @@
+---
+import Hello from "../components/Hello.tsx";
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="otel-semconv-search"
+  description="Fast searchable explorer for OpenTelemetry semantic conventions."
+>
+  <main>
+    <h1>otel-semconv-search</h1>
+    <p>Scaffold is up. Search UI lands in a later slice.</p>
+    <Hello client:load />
+  </main>
+</Base>

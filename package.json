@@ -1,0 +1,37 @@
+{
+  "name": "otel-semconv-search",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Fast searchable explorer for OpenTelemetry semantic conventions, with per-version history.",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@10.34.3",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "resolve": "bash scripts/resolve.sh",
+    "build:data": "tsx scripts/build-data.ts",
+    "data": "pnpm resolve && pnpm build:data",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@astrojs/preact": "^5.1.5",
+    "astro": "^6.4.8",
+    "preact": "^10.29.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.0",
+    "@types/node": "^24.13.2",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}

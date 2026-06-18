@@ -1,0 +1,13 @@
+# PoC reference implementation — kept locally, never committed.
+poc/
+
+# Dependencies / build output
+node_modules/
+dist/
+.astro/
+
+# Generated data cache (per-tag weaver output)
+data/resolved/
+
+*.log
+.DS_Store
