@@ -21,7 +21,6 @@ const latest = data.versions.at(-1);
                 Search {docs.length.toLocaleString()} OpenTelemetry semantic-convention
                 definitions across
                 {data.versions.length} versions ({data.floor}–{latest}).
-                <a href={`${import.meta.env.BASE_URL}diff/`} class="diff-link">Version diff →</a>
             </p>
         </header>
         <Search docs={docs} client:load />
@@ -36,11 +35,6 @@ const latest = data.versions.at(-1);
     .masthead p {
         margin: 0 0 1.25rem;
         color: var(--muted);
-    }
-    .diff-link {
-        color: var(--accent);
-        font-size: 0.85rem;
-        white-space: nowrap;
     }
 
     .q {
@@ -154,7 +148,7 @@ const latest = data.versions.at(-1);
     }
     .brief {
         margin: 0.35rem 0 0;
-        color: #374151;
+        color: var(--fg);
         font-size: 0.9rem;
     }
 </style>

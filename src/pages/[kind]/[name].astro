@@ -294,9 +294,9 @@ const description = `${entity.name} — ${KIND_LABEL[entity.kind]}, ${descStab}.
   }
 
   .dep-notice {
-    background: #fff5f5;
-    border: 1px solid #fca5a5;
-    border-left: 4px solid #ef4444;
+    background: var(--dep-bg);
+    border: 1px solid var(--dep-border);
+    border-left: 4px solid var(--dep-border-l);
     border-radius: 6px;
     padding: 0.6rem 0.9rem;
     margin: 0 0 1rem;
@@ -306,7 +306,7 @@ const description = `${entity.name} — ${KIND_LABEL[entity.kind]}, ${descStab}.
   }
 
   .note-block {
-    background: #f9fafb;
+    background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 6px;
     padding: 0.6rem 0.9rem;
@@ -325,7 +325,7 @@ const description = `${entity.name} — ${KIND_LABEL[entity.kind]}, ${descStab}.
     padding-left: 1.4rem;
   }
   .md :global(pre) {
-    background: #f3f4f6;
+    background: var(--surface2);
     border: 1px solid var(--line);
     border-radius: 6px;
     padding: 0.6rem;
@@ -334,7 +334,7 @@ const description = `${entity.name} — ${KIND_LABEL[entity.kind]}, ${descStab}.
   }
   .md :global(code) {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    background: #f3f4f6;
+    background: var(--surface2);
     padding: 0.1em 0.35em;
     border-radius: 4px;
     font-size: 0.88em;
@@ -374,7 +374,7 @@ const description = `${entity.name} — ${KIND_LABEL[entity.kind]}, ${descStab}.
   .ex {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.85em;
-    background: #f3f4f6;
+    background: var(--surface2);
     padding: 0.1em 0.35em;
     border-radius: 4px;
   }
@@ -422,7 +422,7 @@ const description = `${entity.name} — ${KIND_LABEL[entity.kind]}, ${descStab}.
   .timeline code {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.85em;
-    background: #f3f4f6;
+    background: var(--surface2);
     padding: 0.1em 0.35em;
     border-radius: 4px;
   }

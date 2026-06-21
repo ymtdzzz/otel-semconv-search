@@ -14,7 +14,6 @@ const latest = data.versions.at(-1);
   description="Compare two OpenTelemetry semantic convention versions: added, removed, renamed, stability changes, and deprecations."
 >
   <main>
-    <p class="crumbs"><a href={BASE}>Search</a> / Diff</p>
     <h1>Version diff</h1>
     <p class="subtitle">
       Compare changes between any two versions ({data.floor}–{latest}).
@@ -24,19 +23,6 @@ const latest = data.versions.at(-1);
 </Base>
 
 <style>
-  .crumbs {
-    color: var(--muted);
-    font-size: 0.85rem;
-    margin: 0 0 0.5rem;
-  }
-  .crumbs a {
-    color: var(--accent);
-    text-decoration: none;
-  }
-  .crumbs a:hover {
-    text-decoration: underline;
-  }
-
   h1 {
     margin: 0 0 0.25rem;
     font-size: 1.5rem;
@@ -59,6 +45,8 @@ const latest = data.versions.at(-1);
     border: 1px solid var(--line);
     border-radius: 6px;
     font-size: 0.9rem;
+    background: var(--bg);
+    color: var(--fg);
   }
   :global(.diff-arrow) {
     color: var(--muted);
@@ -117,7 +105,7 @@ const latest = data.versions.at(-1);
   :global(.diff-section code) {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.85em;
-    background: #f3f4f6;
+    background: var(--surface2);
     padding: 0.1em 0.35em;
     border-radius: 4px;
   }
