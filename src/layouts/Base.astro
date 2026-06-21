@@ -1,7 +1,7 @@
 ---
 interface Props {
-  title: string;
-  description?: string;
+    title: string;
+    description?: string;
 }
 
 const { title, description } = Astro.props;
@@ -9,13 +9,75 @@ const { title, description } = Astro.props;
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    {description && <meta name="description" content={description} />}
-  </head>
-  <body>
-    <slot />
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{title}</title>
+        {description && <meta name="description" content={description} />}
+    </head>
+    <body>
+        <slot />
+    </body>
 </html>
+
+<style is:global>
+    :root {
+        --fg: #1b1b1f;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --accent: #2563eb;
+    }
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        margin: 0;
+        font:
+            15px/1.5 system-ui,
+            -apple-system,
+            Segoe UI,
+            Roboto,
+            sans-serif;
+        color: var(--fg);
+    }
+    main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 4rem;
+    }
+    .badge {
+        font-size: 0.72rem;
+        padding: 0.05rem 0.4rem;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        white-space: nowrap;
+    }
+    .badge.kind {
+        background: #f3f4f6;
+    }
+    .badge.stab-stable {
+        background: #dcfce7;
+        border-color: #86efac;
+    }
+    .badge.stab-release_candidate {
+        background: #e0f2fe;
+        border-color: #7dd3fc;
+    }
+    .badge.stab-development {
+        background: #fef9c3;
+        border-color: #fde047;
+    }
+    .badge.stab-alpha,
+    .badge.stab-beta {
+        background: #fae8ff;
+        border-color: #e9d5ff;
+    }
+    .badge.dep {
+        background: #ffedd5;
+        border-color: #fdba74;
+    }
+    .badge.rm {
+        background: #fee2e2;
+        border-color: #fca5a5;
+    }
+</style>
