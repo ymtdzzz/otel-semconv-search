@@ -35,6 +35,9 @@ const DOCS: SearchDoc[] = [
 
 afterEach(cleanup);
 
+/** Find the filter toggle button regardless of its text siblings. */
+const filterBtn = () => screen.getByRole("button", { name: /filters/i });
+
 /** Wait for the async Orama index build + first search to render the summary. */
 const summary = () => screen.findByText(/showing/i);
 
@@ -104,5 +107,65 @@ describe("Search island", () => {
     });
     await waitFor(() => expect(within(nsFieldset).getAllByRole("checkbox")).toHaveLength(1));
     expect(within(nsFieldset).getByText("system")).toBeTruthy();
+  });
+});
+
+describe("Search — filter toggle", () => {
+  it("renders a Filters button", async () => {
+    render(<Search docs={DOCS} />);
+    await summary();
+    expect(filterBtn()).toBeTruthy();
+  });
+
+  it("starts collapsed: aria-expanded is false and aside has no facets-open class", async () => {
+    render(<Search docs={DOCS} />);
+    await summary();
+    expect(filterBtn().getAttribute("aria-expanded")).toBe("false");
+    expect(screen.getByRole("complementary").classList.contains("facets-open")).toBe(false);
+  });
+
+  it("expands on first click: aria-expanded becomes true and facets-open is added", async () => {
+    render(<Search docs={DOCS} />);
+    await summary();
+    fireEvent.click(filterBtn());
+    expect(filterBtn().getAttribute("aria-expanded")).toBe("true");
+    expect(screen.getByRole("complementary").classList.contains("facets-open")).toBe(true);
+  });
+
+  it("collapses on second click", async () => {
+    render(<Search docs={DOCS} />);
+    await summary();
+    fireEvent.click(filterBtn());
+    fireEvent.click(filterBtn());
+    expect(filterBtn().getAttribute("aria-expanded")).toBe("false");
+    expect(screen.getByRole("complementary").classList.contains("facets-open")).toBe(false);
+  });
+
+  it("shows a count badge when one kind filter is active", async () => {
+    render(<Search docs={DOCS} />);
+    await summary();
+    fireEvent.click(screen.getByRole("checkbox", { name: /^metric/ }));
+    await waitFor(() => {
+      const badge = filterBtn().querySelector(".filter-badge");
+      expect(badge).toBeTruthy();
+      expect(badge?.textContent).toBe("1");
+    });
+  });
+
+  it("increments the badge for multiple active filters", async () => {
+    render(<Search docs={DOCS} />);
+    await summary();
+    fireEvent.click(screen.getByRole("checkbox", { name: /^metric/ }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /^deprecated only/i }));
+    await waitFor(() => {
+      const badge = filterBtn().querySelector(".filter-badge");
+      expect(badge?.textContent).toBe("2");
+    });
+  });
+
+  it("hides the badge when no filters are active", async () => {
+    render(<Search docs={DOCS} />);
+    await summary();
+    expect(filterBtn().querySelector(".filter-badge")).toBeNull();
   });
 });

@@ -47,6 +47,7 @@ export default function Search({ docs }: Props) {
   const [deprecatedOnly, setDeprecatedOnly] = useState(false);
   const [nsFilter, setNsFilter] = useState("");
   const [result, setResult] = useState<SearchResult | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Static option lists (full domain, stable order); counts come from results.
   const kindOpts = useMemo(() => options(docs, "kind", KIND_ORDER), [docs]);
@@ -121,6 +122,14 @@ export default function Search({ docs }: Props) {
     </fieldset>
   );
 
+  const activeFilterCount =
+    kinds.length +
+    stabilities.length +
+    addedVersions.length +
+    namespaces.length +
+    (status !== "all" ? 1 : 0) +
+    (deprecatedOnly ? 1 : 0);
+
   return (
     <div class="search">
       <input
@@ -132,59 +141,87 @@ export default function Search({ docs }: Props) {
       />
 
       <div class="layout">
-        <aside class="facets">
-          {checkboxGroup("Kind", "kind", kindOpts, kinds, setKinds)}
-          {checkboxGroup("Stability", "stability", stabilityOpts, stabilities, setStabilities)}
+        <div class="filter-panel">
+          <button
+            type="button"
+            class="filter-toggle"
+            onClick={() => setShowFilters(!showFilters)}
+            aria-expanded={showFilters}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="8" y1="12" x2="16" y2="12" />
+              <line x1="11" y1="18" x2="13" y2="18" />
+            </svg>
+            Filters
+            {activeFilterCount > 0 && <span class="filter-badge">{activeFilterCount}</span>}
+            <span class="filter-chevron">{showFilters ? "▲" : "▼"}</span>
+          </button>
+          <aside class={`facets${showFilters ? " facets-open" : ""}`}>
+            {checkboxGroup("Kind", "kind", kindOpts, kinds, setKinds)}
+            {checkboxGroup("Stability", "stability", stabilityOpts, stabilities, setStabilities)}
 
-          <fieldset class="facet">
-            <legend>Status</legend>
-            {(["all", "current", "removed"] as Status[]).map((s) => (
-              <label key={s} class="opt">
-                <input
-                  type="radio"
-                  name="status"
-                  checked={status === s}
-                  onChange={() => setStatus(s)}
-                />
-                <span class="opt-label">{s}</span>
-              </label>
-            ))}
-            <label class="opt">
-              <input
-                type="checkbox"
-                checked={deprecatedOnly}
-                onChange={() => setDeprecatedOnly(!deprecatedOnly)}
-              />
-              <span class="opt-label">deprecated only</span>
-            </label>
-          </fieldset>
-
-          {checkboxGroup("Added in", "addedVersion", addedOpts, addedVersions, setAddedVersions)}
-
-          <fieldset class="facet">
-            <legend>Namespace</legend>
-            <input
-              class="ns-filter"
-              type="search"
-              placeholder="filter namespaces…"
-              value={nsFilter}
-              onInput={(e) => setNsFilter((e.target as HTMLInputElement).value)}
-            />
-            <div class="ns-list">
-              {visibleNs.map((v) => (
-                <label key={v} class="opt">
+            <fieldset class="facet">
+              <legend>Status</legend>
+              {(["all", "current", "removed"] as Status[]).map((s) => (
+                <label key={s} class="opt">
                   <input
-                    type="checkbox"
-                    checked={namespaces.includes(v)}
-                    onChange={() => setNamespaces(toggle(namespaces, v))}
+                    type="radio"
+                    name="status"
+                    checked={status === s}
+                    onChange={() => setStatus(s)}
                   />
-                  <span class="opt-label">{v}</span>
-                  <span class="opt-count">{count("namespace", v)}</span>
+                  <span class="opt-label">{s}</span>
                 </label>
               ))}
-            </div>
-          </fieldset>
-        </aside>
+              <label class="opt">
+                <input
+                  type="checkbox"
+                  checked={deprecatedOnly}
+                  onChange={() => setDeprecatedOnly(!deprecatedOnly)}
+                />
+                <span class="opt-label">deprecated only</span>
+              </label>
+            </fieldset>
+
+            {checkboxGroup("Added in", "addedVersion", addedOpts, addedVersions, setAddedVersions)}
+
+            <fieldset class="facet">
+              <legend>Namespace</legend>
+              <input
+                class="ns-filter"
+                type="search"
+                placeholder="filter namespaces…"
+                value={nsFilter}
+                onInput={(e) => setNsFilter((e.target as HTMLInputElement).value)}
+              />
+              <div class="ns-list">
+                {visibleNs.map((v) => (
+                  <label key={v} class="opt">
+                    <input
+                      type="checkbox"
+                      checked={namespaces.includes(v)}
+                      onChange={() => setNamespaces(toggle(namespaces, v))}
+                    />
+                    <span class="opt-label">{v}</span>
+                    <span class="opt-count">{count("namespace", v)}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          </aside>
+        </div>
 
         <section class="results">
           {result ? (
