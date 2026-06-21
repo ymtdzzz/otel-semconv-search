@@ -10,7 +10,8 @@ interface Props {
 type Status = "all" | "current" | "removed";
 
 const LIMIT = 200;
-const BASE = import.meta.env.BASE_URL;
+const _base = import.meta.env.BASE_URL;
+const BASE = _base.endsWith("/") ? _base : `${_base}/`;
 
 const KIND_ORDER = ["attribute", "metric", "span", "event", "entity"];
 const STABILITY_ORDER = ["stable", "release_candidate", "beta", "alpha", "development"];
