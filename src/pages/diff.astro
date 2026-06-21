@@ -10,112 +10,112 @@ const latest = data.versions.at(-1);
 ---
 
 <Base
-  title="Version diff — otel-semconv-search"
-  description="Compare two OpenTelemetry semantic convention versions: added, removed, renamed, stability changes, and deprecations."
+    title="Version diff — OTel Semconv"
+    description="Compare two OpenTelemetry semantic convention versions: added, removed, renamed, stability changes, and deprecations."
 >
-  <main>
-    <h1>Version diff</h1>
-    <p class="subtitle">
-      Compare changes between any two versions ({data.floor}–{latest}).
-    </p>
-    <Diff client:load />
-  </main>
+    <main>
+        <h1>Version diff</h1>
+        <p class="subtitle">
+            Compare changes between any two versions ({data.floor}–{latest}).
+        </p>
+        <Diff client:load />
+    </main>
 </Base>
 
 <style>
-  h1 {
-    margin: 0 0 0.25rem;
-    font-size: 1.5rem;
-  }
-
-  .subtitle {
-    margin: 0 0 1.25rem;
-    color: var(--muted);
-  }
-
-  :global(.diff-controls) {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    margin: 0 0 1.5rem;
-    flex-wrap: wrap;
-  }
-  :global(.diff-controls select) {
-    padding: 0.3rem 0.5rem;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    font-size: 0.9rem;
-    background: var(--bg);
-    color: var(--fg);
-  }
-  :global(.diff-arrow) {
-    color: var(--muted);
-  }
-  :global(.diff-hint) {
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-
-  :global(.diff-sections) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-  @media (max-width: 720px) {
-    :global(.diff-sections) {
-      grid-template-columns: 1fr;
+    h1 {
+        margin: 0 0 0.25rem;
+        font-size: 1.5rem;
     }
-  }
 
-  :global(.diff-section h2) {
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--muted);
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 0.4rem;
-    margin: 0 0 0.5rem;
-  }
-  :global(.diff-count) {
-    font-weight: 400;
-  }
-  :global(.diff-section ul) {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-height: 400px;
-    overflow-y: auto;
-  }
-  :global(.diff-section li) {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.2rem 0;
-    font-size: 0.88rem;
-    flex-wrap: wrap;
-  }
-  :global(.diff-section a) {
-    color: var(--accent);
-    text-decoration: none;
-  }
-  :global(.diff-section a:hover) {
-    text-decoration: underline;
-  }
-  :global(.diff-section code) {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.85em;
-    background: var(--surface2);
-    padding: 0.1em 0.35em;
-    border-radius: 4px;
-  }
-  :global(.diff-meta) {
-    color: var(--muted);
-    font-size: 0.82rem;
-  }
-  :global(.diff-none) {
-    color: var(--muted);
-    font-size: 0.88rem;
-    margin: 0;
-  }
+    .subtitle {
+        margin: 0 0 1.25rem;
+        color: var(--muted);
+    }
+
+    :global(.diff-controls) {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        margin: 0 0 1.5rem;
+        flex-wrap: wrap;
+    }
+    :global(.diff-controls select) {
+        padding: 0.3rem 0.5rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background: var(--bg);
+        color: var(--fg);
+    }
+    :global(.diff-arrow) {
+        color: var(--muted);
+    }
+    :global(.diff-hint) {
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
+    :global(.diff-sections) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    @media (max-width: 720px) {
+        :global(.diff-sections) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    :global(.diff-section h2) {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 0.4rem;
+        margin: 0 0 0.5rem;
+    }
+    :global(.diff-count) {
+        font-weight: 400;
+    }
+    :global(.diff-section ul) {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    :global(.diff-section li) {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.2rem 0;
+        font-size: 0.88rem;
+        flex-wrap: wrap;
+    }
+    :global(.diff-section a) {
+        color: var(--accent);
+        text-decoration: none;
+    }
+    :global(.diff-section a:hover) {
+        text-decoration: underline;
+    }
+    :global(.diff-section code) {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.85em;
+        background: var(--surface2);
+        padding: 0.1em 0.35em;
+        border-radius: 4px;
+    }
+    :global(.diff-meta) {
+        color: var(--muted);
+        font-size: 0.82rem;
+    }
+    :global(.diff-none) {
+        color: var(--muted);
+        font-size: 0.88rem;
+        margin: 0;
+    }
 </style>

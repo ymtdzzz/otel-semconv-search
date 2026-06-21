@@ -9,18 +9,18 @@ const BASE = import.meta.env.BASE_URL;
 const BASE_SLASH = BASE.endsWith("/") ? BASE : `${BASE}/`;
 
 const KIND_LABEL: Record<string, string> = {
-  attribute: "Attribute",
-  metric: "Metric",
-  event: "Event",
-  span: "Span",
-  entity: "Entity",
+    attribute: "Attribute",
+    metric: "Metric",
+    event: "Event",
+    span: "Span",
+    entity: "Entity",
 };
 
 export function getStaticPaths() {
-  return (dataset as Dataset).entities.map((e) => ({
-    params: { kind: e.kind, name: e.name },
-    props: { entity: e },
-  }));
+    return (dataset as Dataset).entities.map((e) => ({
+        params: { kind: e.kind, name: e.name },
+        props: { entity: e },
+    }));
 }
 
 const { entity } = Astro.props as { entity: Entity };
@@ -32,398 +32,487 @@ const addedInIsFloor = entity.presence[0]?.from === floor;
 const entitySet = new Set(data.entities.map((e) => `${e.kind}:${e.name}`));
 
 const referencingMetrics =
-  entity.kind === "entity"
-    ? data.entities.filter(
-        (e) => e.kind === "metric" && e.entityAssociations?.includes(entity.name),
-      )
-    : [];
+    entity.kind === "entity"
+        ? data.entities.filter(
+              (e) =>
+                  e.kind === "metric" &&
+                  e.entityAssociations?.includes(entity.name),
+          )
+        : [];
 
 function entityHref(kind: string, name: string): string {
-  return `${BASE_SLASH}${kind}/${name}/`;
+    return `${BASE_SLASH}${kind}/${name}/`;
 }
 
 const examples =
-  entity.examples == null
-    ? []
-    : Array.isArray(entity.examples)
-      ? (entity.examples as unknown[])
-      : [entity.examples];
+    entity.examples == null
+        ? []
+        : Array.isArray(entity.examples)
+          ? (entity.examples as unknown[])
+          : [entity.examples];
 
 const descStab = entity.stability ?? "development";
 const description = `${entity.name} — ${KIND_LABEL[entity.kind]}, ${descStab}. ${toPlain(entity.brief)}`;
 ---
 
-<Base title={`${entity.name} — otel-semconv-search`} description={description}>
-  <main>
-    <p class="crumbs"><a href={BASE}>Search</a> / {KIND_LABEL[entity.kind]}</p>
-    <h1><code>{entity.name}</code></h1>
+<Base title={`${entity.name} — OTel Semconv`} description={description}>
+    <main>
+        <p class="crumbs">
+            <a href={BASE}>Search</a> / {KIND_LABEL[entity.kind]}
+        </p>
+        <h1><code>{entity.name}</code></h1>
 
-    <div class="badges">
-      <span class={`badge kind kind-${entity.kind}`}>{KIND_LABEL[entity.kind]}</span>
-      {entity.stability && (
-        <span class={`badge stab stab-${entity.stability}`}>{entity.stability}</span>
-      )}
-      {entity.deprecated && <span class="badge dep">deprecated</span>}
-      {isRemoved && (
-        <span class="badge rm">removed after {entity.presence.at(-1)?.to}</span>
-      )}
-    </div>
+        <div class="badges">
+            <span class={`badge kind kind-${entity.kind}`}
+                >{KIND_LABEL[entity.kind]}</span
+            >
+            {
+                entity.stability && (
+                    <span class={`badge stab stab-${entity.stability}`}>
+                        {entity.stability}
+                    </span>
+                )
+            }
+            {entity.deprecated && <span class="badge dep">deprecated</span>}
+            {
+                isRemoved && (
+                    <span class="badge rm">
+                        removed after {entity.presence.at(-1)?.to}
+                    </span>
+                )
+            }
+        </div>
 
-    {entity.brief && <p class="brief md" set:html={renderInline(entity.brief)} />}
+        {
+            entity.brief && (
+                <p class="brief md" set:html={renderInline(entity.brief)} />
+            )
+        }
 
-    {entity.deprecated && entity.deprecation && (
-      <div class="dep-notice md">
-        <strong>Deprecated — {entity.deprecation.reason}</strong>
-        {entity.deprecation.renamedTo && (
-          <span>
-            {" → "}
-            {entitySet.has(`${entity.kind}:${entity.deprecation.renamedTo}`) ? (
-              <a href={entityHref(entity.kind, entity.deprecation.renamedTo)}>
-                <code>{entity.deprecation.renamedTo}</code>
-              </a>
-            ) : (
-              <code>{entity.deprecation.renamedTo}</code>
-            )}
-          </span>
-        )}
-        {entity.deprecation.note && (
-          <div set:html={renderBlock(entity.deprecation.note)} />
-        )}
-      </div>
-    )}
+        {
+            entity.deprecated && entity.deprecation && (
+                <div class="dep-notice md">
+                    <strong>Deprecated — {entity.deprecation.reason}</strong>
+                    {entity.deprecation.renamedTo && (
+                        <span>
+                            {" → "}
+                            {entitySet.has(
+                                `${entity.kind}:${entity.deprecation.renamedTo}`,
+                            ) ? (
+                                <a
+                                    href={entityHref(
+                                        entity.kind,
+                                        entity.deprecation.renamedTo,
+                                    )}
+                                >
+                                    <code>{entity.deprecation.renamedTo}</code>
+                                </a>
+                            ) : (
+                                <code>{entity.deprecation.renamedTo}</code>
+                            )}
+                        </span>
+                    )}
+                    {entity.deprecation.note && (
+                        <div set:html={renderBlock(entity.deprecation.note)} />
+                    )}
+                </div>
+            )
+        }
 
-    {entity.note && (
-      <div class="note-block md">
-        <div set:html={renderBlock(entity.note)} />
-      </div>
-    )}
+        {
+            entity.note && (
+                <div class="note-block md">
+                    <div set:html={renderBlock(entity.note)} />
+                </div>
+            )
+        }
 
-    <dl class="meta">
-      <dt>Added in</dt>
-      <dd>
-        {addedInIsFloor
-          ? `≤ ${entity.presence[0]?.from} (existed before tracked window)`
-          : entity.presence[0]?.from}
-      </dd>
-
-      {entity.kind === "attribute" && entity.type && (
-        <>
-          <dt>Type</dt>
-          <dd><code>{entity.type}</code></dd>
-        </>
-      )}
-
-      {entity.kind === "metric" && entity.instrument && (
-        <>
-          <dt>Instrument</dt>
-          <dd>{entity.instrument}</dd>
-        </>
-      )}
-      {entity.kind === "metric" && entity.unit && (
-        <>
-          <dt>Unit</dt>
-          <dd><code>{entity.unit}</code></dd>
-        </>
-      )}
-      {entity.kind === "metric" &&
-        entity.entityAssociations &&
-        entity.entityAssociations.length > 0 && (
-          <>
-            <dt>Entity associations</dt>
+        <dl class="meta">
+            <dt>Added in</dt>
             <dd>
-              {entity.entityAssociations.map((assoc, i) => (
-                <span>
-                  {i > 0 ? ", " : ""}
-                  {entitySet.has(`entity:${assoc}`) ? (
-                    <a href={entityHref("entity", assoc)}>{assoc}</a>
-                  ) : (
-                    assoc
-                  )}
-                </span>
-              ))}
+                {
+                    addedInIsFloor
+                        ? `≤ ${entity.presence[0]?.from} (existed before tracked window)`
+                        : entity.presence[0]?.from
+                }
             </dd>
-          </>
-        )}
 
-      {entity.kind === "span" && entity.spanKind && (
-        <>
-          <dt>Span kind</dt>
-          <dd>{entity.spanKind}</dd>
-        </>
-      )}
+            {
+                entity.kind === "attribute" && entity.type && (
+                    <>
+                        <dt>Type</dt>
+                        <dd>
+                            <code>{entity.type}</code>
+                        </dd>
+                    </>
+                )
+            }
 
-      {examples.length > 0 && (
-        <>
-          <dt>Examples</dt>
-          <dd class="examples">
-            {examples.map((ex) => (
-              <code class="ex">{String(ex)}</code>
-            ))}
-          </dd>
-        </>
-      )}
+            {
+                entity.kind === "metric" && entity.instrument && (
+                    <>
+                        <dt>Instrument</dt>
+                        <dd>{entity.instrument}</dd>
+                    </>
+                )
+            }
+            {
+                entity.kind === "metric" && entity.unit && (
+                    <>
+                        <dt>Unit</dt>
+                        <dd>
+                            <code>{entity.unit}</code>
+                        </dd>
+                    </>
+                )
+            }
+            {
+                entity.kind === "metric" &&
+                    entity.entityAssociations &&
+                    entity.entityAssociations.length > 0 && (
+                        <>
+                            <dt>Entity associations</dt>
+                            <dd>
+                                {entity.entityAssociations.map((assoc, i) => (
+                                    <span>
+                                        {i > 0 ? ", " : ""}
+                                        {entitySet.has(`entity:${assoc}`) ? (
+                                            <a
+                                                href={entityHref(
+                                                    "entity",
+                                                    assoc,
+                                                )}
+                                            >
+                                                {assoc}
+                                            </a>
+                                        ) : (
+                                            assoc
+                                        )}
+                                    </span>
+                                ))}
+                            </dd>
+                        </>
+                    )
+            }
 
-      <dt>Last seen</dt>
-      <dd>
-        {entity.presence.at(-1)?.to}
-        {isRemoved ? " (removed)" : " (current)"}
-      </dd>
-    </dl>
+            {
+                entity.kind === "span" && entity.spanKind && (
+                    <>
+                        <dt>Span kind</dt>
+                        <dd>{entity.spanKind}</dd>
+                    </>
+                )
+            }
 
-    <section class="history">
-      {entity.presence.length > 1 && (
-        <>
-          <h2>Presence</h2>
-          <ul class="timeline">
-            {entity.presence.map((span) => (
-              <li>
-                <span class="ver">{span.from}</span>
-                <span class="sep">–</span>
-                <span class="ver">{span.to}</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+            {
+                examples.length > 0 && (
+                    <>
+                        <dt>Examples</dt>
+                        <dd class="examples">
+                            {examples.map((ex) => (
+                                <code class="ex">{String(ex)}</code>
+                            ))}
+                        </dd>
+                    </>
+                )
+            }
 
-      <h2>Stability history</h2>
-      {entity.stabilityHistory.length > 0 ? (
-        <ul class="timeline">
-          {entity.stabilityHistory.map((c) => (
-            <li>
-              <span class="ver">{c.version}</span>
-              <span class={`badge stab stab-${c.stability}`}>{c.stability}</span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p class="muted">No stability changes recorded.</p>
-      )}
+            <dt>Last seen</dt>
+            <dd>
+                {entity.presence.at(-1)?.to}
+                {isRemoved ? " (removed)" : " (current)"}
+            </dd>
+        </dl>
 
-      {entity.deprecatedSpans.length > 0 && (
-        <>
-          <h2>Deprecation history</h2>
-          <ul class="timeline">
-            {entity.deprecatedSpans.map((span) => (
-              <li>
-                <span class="ver">{span.from}</span>
-                <span class="sep">–</span>
-                <span class="ver">{span.to === latest ? "current" : span.to}</span>
-                <span class="badge dep">deprecated</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+        <section class="history">
+            {
+                entity.presence.length > 1 && (
+                    <>
+                        <h2>Presence</h2>
+                        <ul class="timeline">
+                            {entity.presence.map((span) => (
+                                <li>
+                                    <span class="ver">{span.from}</span>
+                                    <span class="sep">–</span>
+                                    <span class="ver">{span.to}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                )
+            }
 
-      {entity.renames.length > 0 && (
-        <>
-          <h2>Renames</h2>
-          <ul class="timeline">
-            {entity.renames.map((r) => (
-              <li>
-                <span class="ver">{r.version}</span>
-                {r.from !== entity.name && entitySet.has(`${entity.kind}:${r.from}`) ? (
-                  <a href={entityHref(entity.kind, r.from)}><code>{r.from}</code></a>
+            <h2>Stability history</h2>
+            {
+                entity.stabilityHistory.length > 0 ? (
+                    <ul class="timeline">
+                        {entity.stabilityHistory.map((c) => (
+                            <li>
+                                <span class="ver">{c.version}</span>
+                                <span class={`badge stab stab-${c.stability}`}>
+                                    {c.stability}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
                 ) : (
-                  <code>{r.from}</code>
-                )}
-                <span class="sep">→</span>
-                {r.to !== entity.name && entitySet.has(`${entity.kind}:${r.to}`) ? (
-                  <a href={entityHref(entity.kind, r.to)}><code>{r.to}</code></a>
-                ) : (
-                  <code>{r.to}</code>
-                )}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-      {referencingMetrics.length > 0 && (
-        <>
-          <h2>Referenced by</h2>
-          <ul class="timeline">
-            {referencingMetrics.map((m) => (
-              <li>
-                <a href={entityHref("metric", m.name)}><code>{m.name}</code></a>
-                {m.stability && (
-                  <span class={`badge stab stab-${m.stability}`}>{m.stability}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-    </section>
-  </main>
+                    <p class="muted">No stability changes recorded.</p>
+                )
+            }
+
+            {
+                entity.deprecatedSpans.length > 0 && (
+                    <>
+                        <h2>Deprecation history</h2>
+                        <ul class="timeline">
+                            {entity.deprecatedSpans.map((span) => (
+                                <li>
+                                    <span class="ver">{span.from}</span>
+                                    <span class="sep">–</span>
+                                    <span class="ver">
+                                        {span.to === latest
+                                            ? "current"
+                                            : span.to}
+                                    </span>
+                                    <span class="badge dep">deprecated</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                )
+            }
+
+            {
+                entity.renames.length > 0 && (
+                    <>
+                        <h2>Renames</h2>
+                        <ul class="timeline">
+                            {entity.renames.map((r) => (
+                                <li>
+                                    <span class="ver">{r.version}</span>
+                                    {r.from !== entity.name &&
+                                    entitySet.has(
+                                        `${entity.kind}:${r.from}`,
+                                    ) ? (
+                                        <a
+                                            href={entityHref(
+                                                entity.kind,
+                                                r.from,
+                                            )}
+                                        >
+                                            <code>{r.from}</code>
+                                        </a>
+                                    ) : (
+                                        <code>{r.from}</code>
+                                    )}
+                                    <span class="sep">→</span>
+                                    {r.to !== entity.name &&
+                                    entitySet.has(`${entity.kind}:${r.to}`) ? (
+                                        <a href={entityHref(entity.kind, r.to)}>
+                                            <code>{r.to}</code>
+                                        </a>
+                                    ) : (
+                                        <code>{r.to}</code>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                )
+            }
+            {
+                referencingMetrics.length > 0 && (
+                    <>
+                        <h2>Referenced by</h2>
+                        <ul class="timeline">
+                            {referencingMetrics.map((m) => (
+                                <li>
+                                    <a href={entityHref("metric", m.name)}>
+                                        <code>{m.name}</code>
+                                    </a>
+                                    {m.stability && (
+                                        <span
+                                            class={`badge stab stab-${m.stability}`}
+                                        >
+                                            {m.stability}
+                                        </span>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                )
+            }
+        </section>
+    </main>
 </Base>
 
 <style>
-  .crumbs {
-    color: var(--muted);
-    font-size: 0.85rem;
-    margin: 0 0 0.5rem;
-  }
-  .crumbs a {
-    color: var(--accent);
-    text-decoration: none;
-  }
-  .crumbs a:hover {
-    text-decoration: underline;
-  }
+    .crumbs {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin: 0 0 0.5rem;
+    }
+    .crumbs a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+    .crumbs a:hover {
+        text-decoration: underline;
+    }
 
-  h1 {
-    margin: 0 0 0.5rem;
-    font-size: 1.5rem;
-  }
-  h1 code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 1.4rem;
-  }
+    h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.5rem;
+    }
+    h1 code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 1.4rem;
+    }
 
-  .badges {
-    display: flex;
-    gap: 0.4rem;
-    margin: 0 0 1rem;
-    flex-wrap: wrap;
-  }
+    .badges {
+        display: flex;
+        gap: 0.4rem;
+        margin: 0 0 1rem;
+        flex-wrap: wrap;
+    }
 
-  .brief {
-    font-size: 1.05rem;
-    margin: 0 0 1rem;
-  }
+    .brief {
+        font-size: 1.05rem;
+        margin: 0 0 1rem;
+    }
 
-  .dep-notice {
-    background: var(--dep-bg);
-    border: 1px solid var(--dep-border);
-    border-left: 4px solid var(--dep-border-l);
-    border-radius: 6px;
-    padding: 0.6rem 0.9rem;
-    margin: 0 0 1rem;
-  }
-  .dep-notice a {
-    color: var(--accent);
-  }
+    .dep-notice {
+        background: var(--dep-bg);
+        border: 1px solid var(--dep-border);
+        border-left: 4px solid var(--dep-border-l);
+        border-radius: 6px;
+        padding: 0.6rem 0.9rem;
+        margin: 0 0 1rem;
+    }
+    .dep-notice a {
+        color: var(--accent);
+    }
 
-  .note-block {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 0.6rem 0.9rem;
-    margin: 0 0 1rem;
-  }
+    .note-block {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 0.6rem 0.9rem;
+        margin: 0 0 1rem;
+    }
 
-  .md :global(p) {
-    margin: 0.4rem 0;
-  }
-  .md :global(p:first-child) {
-    margin-top: 0;
-  }
-  .md :global(ul),
-  .md :global(ol) {
-    margin: 0.4rem 0;
-    padding-left: 1.4rem;
-  }
-  .md :global(pre) {
-    background: var(--surface2);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 0.6rem;
-    overflow: auto;
-    font-size: 0.85rem;
-  }
-  .md :global(code) {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    background: var(--surface2);
-    padding: 0.1em 0.35em;
-    border-radius: 4px;
-    font-size: 0.88em;
-  }
-  .md :global(pre code) {
-    background: none;
-    padding: 0;
-  }
-  .md :global(a) {
-    color: var(--accent);
-  }
+    .md :global(p) {
+        margin: 0.4rem 0;
+    }
+    .md :global(p:first-child) {
+        margin-top: 0;
+    }
+    .md :global(ul),
+    .md :global(ol) {
+        margin: 0.4rem 0;
+        padding-left: 1.4rem;
+    }
+    .md :global(pre) {
+        background: var(--surface2);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 0.6rem;
+        overflow: auto;
+        font-size: 0.85rem;
+    }
+    .md :global(code) {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        background: var(--surface2);
+        padding: 0.1em 0.35em;
+        border-radius: 4px;
+        font-size: 0.88em;
+    }
+    .md :global(pre code) {
+        background: none;
+        padding: 0;
+    }
+    .md :global(a) {
+        color: var(--accent);
+    }
 
-  dl.meta {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 0.3rem 1.25rem;
-    margin: 0 0 1.5rem;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-  }
-  dl.meta dt {
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-  dl.meta dd {
-    margin: 0;
-  }
-  dl.meta a {
-    color: var(--accent);
-  }
-  .examples {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-  }
-  .ex {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.85em;
-    background: var(--surface2);
-    padding: 0.1em 0.35em;
-    border-radius: 4px;
-  }
+    dl.meta {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 0.3rem 1.25rem;
+        margin: 0 0 1.5rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+    }
+    dl.meta dt {
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+    dl.meta dd {
+        margin: 0;
+    }
+    dl.meta a {
+        color: var(--accent);
+    }
+    .examples {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+    .ex {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.85em;
+        background: var(--surface2);
+        padding: 0.1em 0.35em;
+        border-radius: 4px;
+    }
 
-  .history h2 {
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin: 1.5rem 0 0.4rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  .muted {
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-  .timeline {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .timeline li {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.2rem 0;
-    font-size: 0.9rem;
-  }
-  .timeline .ver {
-    font-variant-numeric: tabular-nums;
-    color: var(--muted);
-    min-width: 5rem;
-    font-size: 0.85rem;
-  }
-  .timeline .sep {
-    color: var(--muted);
-  }
-  .timeline a {
-    color: var(--accent);
-    text-decoration: none;
-  }
-  .timeline a:hover {
-    text-decoration: underline;
-  }
-  .timeline code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.85em;
-    background: var(--surface2);
-    padding: 0.1em 0.35em;
-    border-radius: 4px;
-  }
+    .history h2 {
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin: 1.5rem 0 0.4rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .muted {
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+    .timeline {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .timeline li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.2rem 0;
+        font-size: 0.9rem;
+    }
+    .timeline .ver {
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+        min-width: 5rem;
+        font-size: 0.85rem;
+    }
+    .timeline .sep {
+        color: var(--muted);
+    }
+    .timeline a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+    .timeline a:hover {
+        text-decoration: underline;
+    }
+    .timeline code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.85em;
+        background: var(--surface2);
+        padding: 0.1em 0.35em;
+        border-radius: 4px;
+    }
 </style>
