@@ -27,10 +27,7 @@ function assertHandled(type: never, version: string, id: string): never {
 }
 
 /** Extract the entity set present in one resolved snapshot, keyed by `${kind} ${name}`. */
-export function extractEntities(
-  groups: ResolvedGroup[],
-  version: string,
-): Map<string, RawEntity> {
+export function extractEntities(groups: ResolvedGroup[], version: string): Map<string, RawEntity> {
   const out = new Map<string, RawEntity>();
   const key = (k: EntityKind, n: string) => `${k} ${n}`;
 
@@ -60,10 +57,7 @@ export function extractEntities(
         break; // carries only attributes (handled above); declares no signal
       case "metric":
         if (typeof g.metric_name === "string")
-          out.set(
-            key("metric", g.metric_name),
-            parseMetric(g, version, g.metric_name),
-          );
+          out.set(key("metric", g.metric_name), parseMetric(g, version, g.metric_name));
         break;
       case "span": {
         // Spans carry no `name`; the group id (minus the "span." prefix) is the identifier.
@@ -72,8 +66,7 @@ export function extractEntities(
         break;
       }
       case "entity": {
-        const name =
-          typeof g.name === "string" ? g.name : stripPrefix(id, "entity.");
+        const name = typeof g.name === "string" ? g.name : stripPrefix(id, "entity.");
         out.set(key("entity", name), parseEntity(g, version, name));
         break;
       }

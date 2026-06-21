@@ -1,15 +1,214 @@
 ---
-import Hello from "../components/Hello.tsx";
+import Search from "../components/Search.tsx";
 import Base from "../layouts/Base.astro";
+import dataset from "../data/semconv.json";
+import { buildSearchDocs } from "../lib/search.ts";
+import type { Dataset } from "../lib/types.ts";
+
+const data = dataset as Dataset;
+const docs = buildSearchDocs(data);
+const latest = data.versions.at(-1);
 ---
 
 <Base
-  title="otel-semconv-search"
-  description="Fast searchable explorer for OpenTelemetry semantic conventions."
+    title="otel-semconv-search"
+    description="Fast searchable explorer for OpenTelemetry semantic conventions."
 >
-  <main>
-    <h1>otel-semconv-search</h1>
-    <p>Scaffold is up. Search UI lands in a later slice.</p>
-    <Hello client:load />
-  </main>
+    <main>
+        <header class="masthead">
+            <h1>otel-semconv-search</h1>
+            <p>
+                Search {docs.length.toLocaleString()} OpenTelemetry semantic-convention
+                definitions across
+                {data.versions.length} versions ({data.floor}–{latest}).
+            </p>
+        </header>
+        <Search docs={docs} client:load />
+    </main>
 </Base>
+
+<style is:global>
+    :root {
+        --fg: #1b1b1f;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --accent: #2563eb;
+    }
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        margin: 0;
+        font:
+            15px/1.5 system-ui,
+            -apple-system,
+            Segoe UI,
+            Roboto,
+            sans-serif;
+        color: var(--fg);
+    }
+    main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 4rem;
+    }
+    .masthead h1 {
+        margin: 0 0 0.25rem;
+        font-size: 1.5rem;
+    }
+    .masthead p {
+        margin: 0 0 1.25rem;
+        color: var(--muted);
+    }
+
+    .q {
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        font-size: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+    }
+    .layout {
+        display: grid;
+        grid-template-columns: 230px 1fr;
+        gap: 1.25rem;
+        margin-top: 1rem;
+    }
+    @media (max-width: 720px) {
+        .layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .facets {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .facet {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        margin: 0;
+        padding: 0.5rem 0.75rem;
+    }
+    .facet legend {
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 0 0.25rem;
+    }
+    .opt {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.1rem 0;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+    .opt-label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .opt-count {
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+        font-size: 0.8rem;
+    }
+    .ns-filter {
+        width: 100%;
+        margin: 0.25rem 0;
+        padding: 0.3rem 0.4rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+    }
+    .ns-list {
+        max-height: 260px;
+        overflow-y: auto;
+    }
+
+    .summary {
+        color: var(--muted);
+        margin: 0 0 0.75rem;
+    }
+    .rows {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .row {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0.6rem 0.75rem;
+    }
+    .row:hover {
+        border-color: var(--accent);
+    }
+    .row-head {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .name {
+        font-weight: 600;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .name.removed {
+        text-decoration: line-through;
+        color: var(--muted);
+    }
+    .since {
+        color: var(--muted);
+        font-size: 0.8rem;
+    }
+    .brief {
+        margin: 0.35rem 0 0;
+        color: #374151;
+        font-size: 0.9rem;
+    }
+
+    .badge {
+        font-size: 0.72rem;
+        padding: 0.05rem 0.4rem;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        white-space: nowrap;
+    }
+    .badge.kind {
+        background: #f3f4f6;
+    }
+    .badge.stab-stable {
+        background: #dcfce7;
+        border-color: #86efac;
+    }
+    .badge.stab-release_candidate {
+        background: #e0f2fe;
+        border-color: #7dd3fc;
+    }
+    .badge.stab-development {
+        background: #fef9c3;
+        border-color: #fde047;
+    }
+    .badge.stab-alpha,
+    .badge.stab-beta {
+        background: #fae8ff;
+        border-color: #e9d5ff;
+    }
+    .badge.dep {
+        background: #ffedd5;
+        border-color: #fdba74;
+    }
+    .badge.rm {
+        background: #fee2e2;
+        border-color: #fca5a5;
+    }
+</style>

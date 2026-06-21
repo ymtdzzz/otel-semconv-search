@@ -9,12 +9,7 @@ import type {
   Stability,
 } from "../../src/lib/types.ts";
 
-export type GroupType =
-  | "attribute_group"
-  | "metric"
-  | "event"
-  | "span"
-  | "entity";
+export type GroupType = "attribute_group" | "metric" | "event" | "span" | "entity";
 
 /** A single group as it appears in weaver's resolved JSON. */
 export interface ResolvedGroup {
@@ -52,13 +47,7 @@ export interface RawEntity {
   spanKind?: SpanKind;
 }
 
-const GROUP_TYPES: readonly GroupType[] = [
-  "attribute_group",
-  "metric",
-  "event",
-  "span",
-  "entity",
-];
+const GROUP_TYPES: readonly GroupType[] = ["attribute_group", "metric", "event", "span", "entity"];
 const STABILITIES: readonly Stability[] = [
   "development",
   "stable",
@@ -72,13 +61,7 @@ const REASONS: readonly DeprecationReason[] = [
   "uncategorized",
   "unspecified",
 ];
-const SPAN_KINDS: readonly SpanKind[] = [
-  "client",
-  "server",
-  "internal",
-  "producer",
-  "consumer",
-];
+const SPAN_KINDS: readonly SpanKind[] = ["client", "server", "internal", "producer", "consumer"];
 const INSTRUMENTS = ["counter", "updowncounter", "histogram", "gauge"] as const;
 const IGNORED_GROUP_TYPES = ["undefined"];
 
@@ -117,21 +100,12 @@ const KNOWN_ATTRIBUTE_KEYS = new Set<string>([
   "tag",
   "type",
 ]);
-const KNOWN_DEPRECATION_KEYS = new Set<string>([
-  "reason",
-  "note",
-  "renamed_to",
-]);
+const KNOWN_DEPRECATION_KEYS = new Set<string>(["reason", "note", "renamed_to"]);
 
 /** Thrown when resolved data falls outside the vocabularies types.ts promises. */
 export class WeaverShapeError extends Error {}
 
-function fail(
-  version: string,
-  id: string,
-  field: string,
-  value: unknown,
-): never {
+function fail(version: string, id: string, field: string, value: unknown): never {
   throw new WeaverShapeError(
     `unexpected ${field}=${JSON.stringify(value)} at ${version} :: ${id} — types.ts may need updating`,
   );
@@ -153,19 +127,11 @@ function checkKeys(
   }
 }
 
-export function checkGroupKeys(
-  group: object,
-  version: string,
-  id: string,
-): void {
+export function checkGroupKeys(group: object, version: string, id: string): void {
   checkKeys(group, KNOWN_GROUP_KEYS, version, id, "group");
 }
 
-export function checkAttributeKeys(
-  attr: object,
-  version: string,
-  id: string,
-): void {
+export function checkAttributeKeys(attr: object, version: string, id: string): void {
   checkKeys(attr, KNOWN_ATTRIBUTE_KEYS, version, id, "attribute");
 }
 
@@ -176,17 +142,12 @@ function oneOf<T extends string>(
   id: string,
   field: string,
 ): T {
-  if (typeof value === "string" && (known as readonly string[]).includes(value))
-    return value as T;
+  if (typeof value === "string" && (known as readonly string[]).includes(value)) return value as T;
   return fail(version, id, field, value);
 }
 
 /** Missing/null stability normalizes to the OTel default; any other value is validated. */
-export function normStability(
-  raw: unknown,
-  version: string,
-  id: string,
-): Stability {
+export function normStability(raw: unknown, version: string, id: string): Stability {
   if (raw == null) return "development";
   return oneOf(STABILITIES, raw, version, id, "stability");
 }
@@ -195,32 +156,16 @@ export function isIgnoredGroupType(raw: unknown): boolean {
   return typeof raw === "string" && IGNORED_GROUP_TYPES.includes(raw);
 }
 
-export function parseGroupType(
-  raw: unknown,
-  version: string,
-  id: string,
-): GroupType {
+export function parseGroupType(raw: unknown, version: string, id: string): GroupType {
   return oneOf(GROUP_TYPES, raw, version, id, "group.type");
 }
 
-export function parseInstrument(
-  raw: unknown,
-  version: string,
-  id: string,
-): string | undefined {
-  return raw == null
-    ? undefined
-    : oneOf(INSTRUMENTS, raw, version, id, "instrument");
+export function parseInstrument(raw: unknown, version: string, id: string): string | undefined {
+  return raw == null ? undefined : oneOf(INSTRUMENTS, raw, version, id, "instrument");
 }
 
-export function parseSpanKind(
-  raw: unknown,
-  version: string,
-  id: string,
-): SpanKind | undefined {
-  return raw == null
-    ? undefined
-    : oneOf(SPAN_KINDS, raw, version, id, "span_kind");
+export function parseSpanKind(raw: unknown, version: string, id: string): SpanKind | undefined {
+  return raw == null ? undefined : oneOf(SPAN_KINDS, raw, version, id, "span_kind");
 }
 
 export function parseDeprecation(
@@ -241,17 +186,10 @@ export function parseDeprecation(
 }
 
 /** Attribute value type: a plain string, or an enum object `{ members: [...] }` → "enum". */
-export function parseAttrType(
-  raw: unknown,
-  version: string,
-  id: string,
-): string | undefined {
+export function parseAttrType(raw: unknown, version: string, id: string): string | undefined {
   if (raw == null) return undefined;
   if (typeof raw === "string") return raw;
-  if (
-    typeof raw === "object" &&
-    Array.isArray((raw as Record<string, unknown>).members)
-  )
+  if (typeof raw === "object" && Array.isArray((raw as Record<string, unknown>).members))
     return "enum";
   return fail(version, id, "type", raw);
 }
@@ -262,8 +200,7 @@ export function parseEntityAssociations(
   id: string,
 ): string[] | undefined {
   if (raw == null) return undefined;
-  if (Array.isArray(raw) && raw.every((x) => typeof x === "string"))
-    return raw as string[];
+  if (Array.isArray(raw) && raw.every((x) => typeof x === "string")) return raw as string[];
   return fail(version, id, "entity_associations", raw); // v0.24 one_of/all_of objects land here
 }
 
@@ -279,10 +216,7 @@ function commonGroupFields(g: ResolvedGroup, version: string, id: string) {
 }
 
 /** Validate one registry/group attribute into a RawEntity. Null when it has no usable name. */
-export function parseAttribute(
-  a: Record<string, unknown>,
-  version: string,
-): RawEntity | null {
+export function parseAttribute(a: Record<string, unknown>, version: string): RawEntity | null {
   const name = a.name;
   if (typeof name !== "string") return null;
   checkAttributeKeys(a, version, name);
@@ -304,21 +238,14 @@ export function parseAttribute(
  * group declares no signal (the tolerated `type: "undefined"` quirk); throws on
  * an unknown type.
  */
-export function classifyGroup(
-  g: ResolvedGroup,
-  version: string,
-): GroupType | null {
+export function classifyGroup(g: ResolvedGroup, version: string): GroupType | null {
   const id = String(g.id ?? "");
   checkGroupKeys(g, version, id);
   if (isIgnoredGroupType(g.type)) return null;
   return parseGroupType(g.type, version, id);
 }
 
-export function parseMetric(
-  g: ResolvedGroup,
-  version: string,
-  name: string,
-): RawEntity {
+export function parseMetric(g: ResolvedGroup, version: string, name: string): RawEntity {
   const id = String(g.id ?? "");
   return {
     kind: "metric",
@@ -326,19 +253,11 @@ export function parseMetric(
     ...commonGroupFields(g, version, id),
     instrument: parseInstrument(g.instrument, version, id),
     unit: typeof g.unit === "string" ? g.unit : undefined,
-    entityAssociations: parseEntityAssociations(
-      g.entity_associations,
-      version,
-      id,
-    ),
+    entityAssociations: parseEntityAssociations(g.entity_associations, version, id),
   };
 }
 
-export function parseSpan(
-  g: ResolvedGroup,
-  version: string,
-  name: string,
-): RawEntity {
+export function parseSpan(g: ResolvedGroup, version: string, name: string): RawEntity {
   const id = String(g.id ?? "");
   return {
     kind: "span",
@@ -348,20 +267,12 @@ export function parseSpan(
   };
 }
 
-export function parseEntity(
-  g: ResolvedGroup,
-  version: string,
-  name: string,
-): RawEntity {
+export function parseEntity(g: ResolvedGroup, version: string, name: string): RawEntity {
   const id = String(g.id ?? "");
   return { kind: "entity", name, ...commonGroupFields(g, version, id) };
 }
 
-export function parseEvent(
-  g: ResolvedGroup,
-  version: string,
-  name: string,
-): RawEntity {
+export function parseEvent(g: ResolvedGroup, version: string, name: string): RawEntity {
   const id = String(g.id ?? "");
   return { kind: "event", name, ...commonGroupFields(g, version, id) };
 }
