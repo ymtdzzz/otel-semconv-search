@@ -1,0 +1,4 @@
+templates:
+  - template: registry.j2
+    filter: .
+    application_mode: single
