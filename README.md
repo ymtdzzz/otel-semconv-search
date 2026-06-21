@@ -1,5 +1,9 @@
 # otel-semconv-search
 
+[![Deploy](https://github.com/ymtdzzz/otel-semconv-search/actions/workflows/deploy.yml/badge.svg)](https://github.com/ymtdzzz/otel-semconv-search/actions/workflows/deploy.yml)
+[![CI](https://github.com/ymtdzzz/otel-semconv-search/actions/workflows/ci.yml/badge.svg)](https://github.com/ymtdzzz/otel-semconv-search/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
 Fast searchable explorer for [OpenTelemetry semantic conventions](https://opentelemetry.io/docs/specs/semconv/), with per-version history.
 
 Search 1,500+ attribute, metric, event, span, and entity definitions across 18 versions (v1.26.0–v1.42.0). Find when each definition was added, track stability changes, and explore version-to-version diffs.
