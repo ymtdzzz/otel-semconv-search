@@ -238,15 +238,17 @@ export default function Search({ docs }: Props) {
                       <span class="row-head">
                         <span class={`badge kind kind-${d.kind}`}>{d.kind}</span>
                         <span class={`name${d.removed ? " removed" : ""}`}>{d.name}</span>
-                        {d.stability ? (
-                          <span class={`badge stab stab-${d.stability}`}>{d.stability}</span>
-                        ) : null}
-                        {d.deprecated ? <span class="badge dep">deprecated</span> : null}
-                        {d.removed ? (
-                          <span class="badge rm">removed after {d.lastSeen}</span>
-                        ) : (
-                          <span class="since">since {d.addedVersion}</span>
-                        )}
+                        <span class="row-meta">
+                          {d.stability ? (
+                            <span class={`badge stab stab-${d.stability}`}>{d.stability}</span>
+                          ) : null}
+                          {d.deprecated ? <span class="badge dep">deprecated</span> : null}
+                          {d.removed ? (
+                            <span class="badge rm">removed after {d.lastSeen}</span>
+                          ) : (
+                            <span class="since">since {d.addedVersion}</span>
+                          )}
+                        </span>
                       </span>
                       {d.brief ? <p class="brief">{d.brief}</p> : null}
                     </a>
