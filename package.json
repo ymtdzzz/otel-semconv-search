@@ -30,7 +30,7 @@
     "preact": "^10.29.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.0",
+    "@biomejs/biome": "^2.5.1",
     "@testing-library/preact": "^3.2.4",
     "@types/node": "^26.0.0",
     "happy-dom": "^20.10.6",
