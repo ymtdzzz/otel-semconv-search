@@ -3,9 +3,6 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  schedule:
-    # Weekly on Monday 00:00 UTC — picks up new semconv releases automatically
-    - cron: "0 0 * * 1"
   workflow_dispatch:
 
 permissions:
@@ -30,28 +27,8 @@ jobs:
           node-version: "24"
           cache: pnpm
 
-      - name: Setup Weaver
-        uses: open-telemetry/weaver/.github/actions/setup-weaver@9b84f5cd76cb98e8aaf37bc58936b31fe0ddbab4 # v0.24.0
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Get week stamp
-        id: date
-        run: echo "week=$(date +'%Y-W%V')" >> "$GITHUB_OUTPUT"
-
-      - name: Restore resolved cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: data/resolved
-          key: semconv-resolved-${{ hashFiles('scripts/resolve.sh', 'scripts/weaver-templates/**') }}-${{ steps.date.outputs.week }}
-          restore-keys: semconv-resolved-${{ hashFiles('scripts/resolve.sh', 'scripts/weaver-templates/**') }}-
-
-      - name: Resolve semconv versions
-        run: pnpm resolve
-
-      - name: Build dataset
-        run: pnpm build:data
 
       - name: Configure Pages
         id: pages
