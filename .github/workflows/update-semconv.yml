@@ -18,7 +18,7 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - run: corepack enable
 
@@ -28,7 +28,7 @@ jobs:
           cache: pnpm
 
       - name: Setup Weaver
-        uses: open-telemetry/weaver/.github/actions/setup-weaver@adcf6fda79c3df1cb537669442aef753b7019777 # v0.24.2
+        uses: open-telemetry/weaver/.github/actions/setup-weaver@a177fb605e66ef8d3b333302459c805091bfedd7 # v0.25.0
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
