@@ -21,8 +21,8 @@
     "1.43.0"
   ],
   "floor": "1.26.0",
-  "weaverVersion": "weaver 0.24.2",
-  "generatedAt": "2026-07-11T01:59:37.649Z",
+  "weaverVersion": "weaver 0.25.0",
+  "generatedAt": "2026-07-27T03:37:58.410Z",
   "entities": [
     {
       "kind": "entity",
