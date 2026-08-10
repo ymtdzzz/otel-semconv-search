@@ -25,16 +25,16 @@
   "dependencies": {
     "@astrojs/preact": "^6.0.2",
     "@orama/orama": "^3.1.18",
-    "astro": "^7.1.6",
-    "marked": "^18.0.7",
-    "preact": "^10.29.7"
+    "astro": "^7.2.0",
+    "marked": "^18.0.9",
+    "preact": "^10.29.8"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.6",
+    "@biomejs/biome": "^2.5.7",
     "@testing-library/preact": "^3.2.4",
     "@types/node": "^26.1.2",
     "happy-dom": "^20.11.1",
-    "tsx": "^4.23.1",
+    "tsx": "^4.23.9",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   }
