@@ -22,13 +22,13 @@ jobs:
 
       - run: corepack enable
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "24"
           cache: pnpm
 
       - name: Setup Weaver
-        uses: open-telemetry/weaver/.github/actions/setup-weaver@38befce4bc68fe320d20f189465c93835ac20c12 # v0.26.1
+        uses: open-telemetry/weaver/.github/actions/setup-weaver@0f7c529d27eacc364824ad00a120566316c7247b # v0.27.0
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
