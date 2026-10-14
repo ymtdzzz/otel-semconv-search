@@ -23,16 +23,16 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@astrojs/preact": "^6.0.5",
+    "@astrojs/preact": "^6.0.6",
     "@orama/orama": "^3.1.18",
-    "astro": "^7.3.5",
-    "marked": "^18.0.14",
-    "preact": "^11.0.0"
+    "astro": "^7.3.8",
+    "marked": "^18.1.0",
+    "preact": "^11.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",
     "@testing-library/preact": "^3.2.4",
-    "@types/node": "^26.6.3",
+    "@types/node": "^26.6.4",
     "happy-dom": "^20.14.5",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
