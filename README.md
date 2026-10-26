@@ -41,7 +41,6 @@ pnpm data       # resolve + build dataset (requires weaver binary in PATH)
 ```
 
 This runs two steps:
-
 1. **`pnpm resolve`** — fetches each semconv release tag and runs `weaver registry generate` to produce `data/resolved/<version>.json` per release. Already-resolved versions are skipped.
 2. **`pnpm build:data`** — reads all resolved JSON files and produces `src/data/semconv.json`.
 
